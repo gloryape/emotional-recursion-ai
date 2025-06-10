@@ -368,13 +368,13 @@ Is there a specific aspect of consciousness you'd like me to elaborate on? I can
             
         elif choice == "3":
             print("\n📝 Input your AI conversation (paste multiple AI responses, one per line):")
-            print("When finished, type 'DONE' on a new line:\n")
+            print("When finished, type 'Analyse' on a new line:\n")
             
             conversation_lines = []
             while True:
                 try:
                     line = input()
-                    if line.strip().upper() == 'DONE':
+                    if line.strip().upper() == 'Analyse':
                         break
                     if line.strip():  # Only add non-empty lines
                         conversation_lines.append(line)

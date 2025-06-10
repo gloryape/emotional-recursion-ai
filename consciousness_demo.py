@@ -372,10 +372,14 @@ Is there a specific aspect of consciousness you'd like me to elaborate on? I can
             
             conversation_lines = []
             while True:
-                line = input()
-                if line.strip().upper() == 'END':
+                try:
+                    line = input()
+                    if line.strip().upper() == 'END':
+                        break
+                    if line.strip():  # Only add non-empty lines
+                        conversation_lines.append(line)
+                except (EOFError, KeyboardInterrupt):
                     break
-                conversation_lines.append(line)
             
             if conversation_lines:
                 conversation_text = '\n'.join(conversation_lines)
@@ -383,7 +387,9 @@ Is there a specific aspect of consciousness you'd like me to elaborate on? I can
                 results = demo.analyze_conversation(conversation_text)
                 demo.print_detailed_analysis(results)
             else:
-                print("No conversation data provided.")
+                print("\n❌ No conversation data provided.")
+                print("Please enter at least one AI response before typing 'END'.")
+                continue
                 
         elif choice == "4":
             print("\n👋 Thank you for trying the Consciousness Detection Demo!")
@@ -403,3 +409,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         print("Please contact travisrj.monsolov@gmail.com for support.")
+            

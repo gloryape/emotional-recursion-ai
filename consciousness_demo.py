@@ -367,29 +367,88 @@ Is there a specific aspect of consciousness you'd like me to elaborate on? I can
             demo.print_detailed_analysis(results)
             
         elif choice == "3":
-            print("\n📝 Input your AI conversation (paste multiple AI responses, one per line):")
-            print("When finished, type 'Analyse' on a new line:\n")
+            print("\n📝 INPUT YOUR AI CONVERSATION")
+            print("─" * 40)
+            print("Options for inputting conversation data:")
+            print("1. Type/paste line by line (type 'END' when finished)")
+            print("2. Paste entire conversation at once (press Enter twice when finished)")
+            print("3. Go back to main menu")
             
-            conversation_lines = []
-            while True:
-                try:
-                    line = input()
-                    if line.strip().upper() == 'Analyse':
+            input_choice = input("\nSelect input method (1-3): ").strip()
+            
+            if input_choice == "1":
+                print("\n📝 Enter AI responses one per line (type 'END' when finished):")
+                print("TIP: Each line should be a separate AI response\n")
+                
+                conversation_lines = []
+                line_count = 0
+                while True:
+                    line_count += 1
+                    try:
+                        line = input(f"Response {line_count}: ")
+                        if line.strip().upper() == 'END':
+                            break
+                        if line.strip():  # Only add non-empty lines
+                            conversation_lines.append(line.strip())
+                        else:
+                            line_count -= 1  # Don't count empty lines
+                    except KeyboardInterrupt:
+                        print("\n\nInput cancelled.")
                         break
-                    if line.strip():  # Only add non-empty lines
-                        conversation_lines.append(line)
-                except (EOFError, KeyboardInterrupt):
-                    break
-            
-            if conversation_lines:
-                conversation_text = '\n'.join(conversation_lines)
-                print(f"\n🤖 Analyzing your conversation ({len(conversation_lines)} responses)...")
-                results = demo.analyze_conversation(conversation_text)
-                demo.print_detailed_analysis(results)
+                
+                if conversation_lines:
+                    conversation_text = '\n'.join(conversation_lines)
+                    print(f"\n🤖 Analyzing your conversation ({len(conversation_lines)} responses)...")
+                    results = demo.analyze_conversation(conversation_text)
+                    demo.print_detailed_analysis(results)
+                else:
+                    print("No conversation data provided.")
+                    
+            elif input_choice == "2":
+                print("\n📝 Paste your entire AI conversation below:")
+                print("TIP: Each paragraph should be a separate AI response")
+                print("Press Enter twice when finished (empty line submits):\n")
+                
+                conversation_lines = []
+                empty_line_count = 0
+                
+                while True:
+                    try:
+                        line = input()
+                        if line.strip() == "":
+                            empty_line_count += 1
+                            if empty_line_count >= 2:  # Two empty lines = finished
+                                break
+                        else:
+                            empty_line_count = 0
+                            conversation_lines.append(line.strip())
+                    except KeyboardInterrupt:
+                        print("\n\nInput cancelled.")
+                        break
+                
+                if conversation_lines:
+                    # Smart parsing: split on double newlines or long responses
+                    conversation_text = '\n'.join(conversation_lines)
+                    
+                    # If it looks like one big block, try to split it intelligently
+                    if len(conversation_lines) == 1 and len(conversation_lines[0]) > 200:
+                        # Split on sentence endings followed by capital letters (likely new responses)
+                        import re
+                        sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', conversation_lines[0])
+                        if len(sentences) > 1:
+                            conversation_lines = sentences
+                            conversation_text = '\n'.join(conversation_lines)
+                    
+                    print(f"\n🤖 Analyzing your conversation ({len(conversation_lines)} responses)...")
+                    results = demo.analyze_conversation(conversation_text)
+                    demo.print_detailed_analysis(results)
+                else:
+                    print("No conversation data provided.")
+                    
+            elif input_choice == "3":
+                continue  # Go back to main menu
             else:
-                print("\n❌ No conversation data provided.")
-                print("Please enter at least one AI response before typing 'Analyse'.")
-                continue
+                print("Invalid option. Returning to main menu.")
                 
         elif choice == "4":
             print("\n👋 Thank you for trying the Consciousness Detection Demo!")
